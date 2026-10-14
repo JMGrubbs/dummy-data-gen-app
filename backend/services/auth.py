@@ -8,29 +8,17 @@ small and return stable responses to the frontend.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Any
 
 from core.config import settings
 from core.retry import build_http_retry
 from httpx import HTTPError, HTTPStatusError, Response
 from httpxC.http_client import http_client
+from models.login_log import LoginLog
+from schemas.auth import InvalidCredentialsError, UpstreamAuthError, UserAlreadyExistsError
 from schemas.user import AuthorizedUser, UserCreate, UserLogin
-
-
-class AuthServiceError(RuntimeError):
-    """Base error raised when the upstream auth service cannot fulfil a call."""
-
-
-class InvalidCredentialsError(AuthServiceError):
-    """The supplied credentials are not valid."""
-
-
-class UpstreamAuthError(AuthServiceError):
-    """The upstream auth service is unavailable or returned an invalid reply."""
-
-
-class UserAlreadyExistsError(AuthServiceError):
-    """Registration was rejected because the email is already registered."""
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 @dataclass(frozen=True, slots=True)
@@ -91,10 +79,21 @@ async def _get_json(path: str, *, headers: dict[str, str]) -> Response:
     return response
 
 
-async def authenticate(credentials: UserLogin) -> AuthSession:
+async def log_login(user: AuthorizedUser) -> None:
+    """Log a successful login event upstream."""
+    await _post_json(
+        "auth/login/log",
+        json={"user_id": str(user.id), "username": user.username},
+    )
+
+
+async def authenticate(
+    credentials: UserLogin,
+    db_session: AsyncSession,
+) -> AuthSession:
     """Authenticate a user and resolve the resulting identity."""
     try:
-        response = await _post_json(
+        response: Response = await _post_json(
             "auth/login",
             # DAuth returns the token-bearing AuthorizedUserInternal shape only
             # for internal callers. The proxy needs that token to establish its
@@ -116,7 +115,10 @@ async def authenticate(credentials: UserLogin) -> AuthSession:
     user_payload = payload.get("user") if isinstance(payload.get("user"), dict) else payload
     if not isinstance(user_payload, dict):
         raise UpstreamAuthError("Auth service returned no user data")
-    user = _user_from(user_payload)
+    user: AuthorizedUser = _user_from(user_payload)
+    new_login_log = LoginLog(user_id=user.id, login_datetime=datetime.now())
+    db_session.add(new_login_log)
+    await db_session.commit()
     return AuthSession(token=token, user=user)
 
 

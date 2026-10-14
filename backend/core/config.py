@@ -7,8 +7,7 @@ class Settings(BaseSettings):
     cookie_key: str = "access_token"
     cookie_secure: bool = False
     auth_api_url: str = "https://dauth.johnmgrubbs.io"
-    frontend_url: str = "http://localhost:5173"
-    frontend_origins: str | None = None
+    frontend_origin_url: list[str]
     admin_api_key: str | None = None
     reciver_url: str = "http://reciver:8000"
 

@@ -14,6 +14,6 @@ async def data_generator() -> dict[str, str]:
         "requests_per_min": 60,
         "data": {"name": "John Doe", "age": 30, "email": "JohnDoe@gmail.com", "timestamp": datetime.now()},
     }
-    await send_data_to_reciver(package)
+    await send_data_to_reciver(data=package)
 
     return {"status": "ok"}

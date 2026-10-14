@@ -21,4 +21,4 @@ async def send_data_to_reciver(data: dict) -> None:
         finally:
             number_of_requests -= 1
             if number_of_requests > 0:
-                await asyncio.sleep(60 / requests_per_min)
+                await asyncio.sleep(delay=60 / requests_per_min)

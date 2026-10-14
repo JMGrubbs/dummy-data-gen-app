@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
-
-from core.config import settings
-from schemas.user import UserLogin, UserCreate, AuthorizedUser, LoginResponse
 from auth.dependencies import get_current_user
+from core.config import settings
+from db.dependencies import get_session
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
+from schemas.user import AuthorizedUser, LoginResponse, UserCreate, UserLogin
 from services.auth import (
     InvalidCredentialsError,
     UpstreamAuthError,
@@ -11,16 +11,19 @@ from services.auth import (
     logout,
     register,
 )
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(tags=["auth"])
+
 
 @router.post("/login")
 async def login_route(
     credentials: UserLogin,
     response: Response,
+    db_session: AsyncSession = Depends(get_session),
 ) -> LoginResponse | dict[str, str | bool]:
     try:
-        session = await authenticate(credentials)
+        session = await authenticate(credentials, db_session)
         response.set_cookie(
             key=settings.cookie_key,
             value=session.token,
@@ -67,4 +70,3 @@ async def register_route(
     except UpstreamAuthError as exc:
         raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail="Unable to create user") from exc
     return {"ok": True, "message": "User created successfully"}
-
