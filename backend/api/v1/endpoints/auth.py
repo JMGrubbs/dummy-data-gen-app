@@ -2,11 +2,9 @@ from auth.dependencies import get_current_user
 from core.config import settings
 from db.dependencies import get_session
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
+from schemas.auth import InvalidCredentialsError, UpstreamAuthError, UserAlreadyExistsError
 from schemas.user import AuthorizedUser, LoginResponse, UserCreate, UserLogin
 from services.auth import (
-    InvalidCredentialsError,
-    UpstreamAuthError,
-    UserAlreadyExistsError,
     authenticate,
     logout,
     register,
@@ -39,7 +37,7 @@ async def login_route(
         response.status_code = status.HTTP_401_UNAUTHORIZED
         return {"ok": False, "message": "Invalid username or password"}
     except UpstreamAuthError:
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Authentication service unavailable")
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Authentication service unavailable") from UpstreamAuthError
 
 
 @router.get("/me")

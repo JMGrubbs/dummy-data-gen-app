@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     frontend_origin_url: list[str]
     admin_api_key: str | None = None
     reciver_url: str = "http://reciver:8000"
+    celery_broker_url: str
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

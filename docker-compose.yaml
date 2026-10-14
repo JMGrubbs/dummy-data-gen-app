@@ -86,6 +86,38 @@ services:
       retries: 3
     restart: always
 
+  rabbitmq:
+    image: rabbitmq:4-management
+    environment:
+      RABBITMQ_DEFAULT_USER: "${RABBITMQ_USER:-celery}"
+      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_PASSWORD:-change-this-password}"
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"
+      - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+  worker:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    working_dir: /app
+    command: celery -A celery_app:celery_app worker --loglevel=INFO --concurrency=2 --queues=data-gen
+    env_file:
+      - ./worker/.env
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    restart: always
+    volumes:
+      - ./worker:/app
+
 volumes:
   frontend_node_modules:
     name: dummy-data-gen-app_frontend_node_modules
