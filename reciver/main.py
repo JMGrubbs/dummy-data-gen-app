@@ -17,7 +17,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(
-    title="Dummy Data Generator API",
+    title="Data Receiver API",
     lifespan=lifespan,
 )
 

@@ -10,10 +10,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from httpx import HTTPError, HTTPStatusError, Response
-
 from core.config import settings
 from core.retry import build_http_retry
+from httpx import HTTPError, HTTPStatusError, Response
 from httpxC.http_client import http_client
 from schemas.user import AuthorizedUser, UserCreate, UserLogin
 
@@ -165,4 +164,3 @@ async def logout(token: str) -> bool:
     except (HTTPError, UpstreamAuthError):
         return False
     return response.is_success
-

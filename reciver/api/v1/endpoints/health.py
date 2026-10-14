@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
 from services.health import dependencies_ready, live_payload
 
-router = APIRouter(tags=["health"])
+router = APIRouter()
 
 
 @router.get("")
