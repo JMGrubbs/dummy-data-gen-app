@@ -106,7 +106,8 @@ services:
       context: ./worker
       dockerfile: Dockerfile
     working_dir: /app
-    command: celery -A celery_app:celery_app worker --loglevel=INFO --concurrency=2 --queues=data-gen
+    command: celery -A celery_app:celery_app worker --loglevel=INFO --autoscale=10,2 --queues=data-gen
+    # command: celery -A celery_app:celery_app worker --loglevel=INFO --concurrency=2 --queues=data-gen --autoscale=10,2
     env_file:
       - ./worker/.env
     depends_on:

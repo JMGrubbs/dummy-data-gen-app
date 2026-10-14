@@ -1,8 +1,8 @@
 """create data_gen_task table
 
-Revision ID: 8cd551492542
+Revision ID: ce47d8bdc8fe
 Revises: ee11264b3dae
-Create Date: 2026-10-14 19:19:25.648448
+Create Date: 2026-10-14 20:50:19.843697
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = '8cd551492542'
+revision: str = 'ce47d8bdc8fe'
 down_revision: Union[str, Sequence[str], None] = 'ee11264b3dae'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -27,6 +27,7 @@ def upgrade() -> None:
     sa.Column('url_destination', sa.String(), nullable=False),
     sa.Column('data_bp', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
     sa.Column('remaining_requests', sa.Integer(), nullable=False),
+    sa.Column('requests_per_min', sa.Integer(), nullable=False),
     sa.Column('status', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     schema='app'

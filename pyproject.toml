@@ -16,7 +16,8 @@ select = [
 
 ignore = [
     "ANN101", # self annotation (obsolete in newer Ruff, harmless if absent)
-    "ANN102"  # cls annotation
+    "ANN102",  # cls annotation
+    "B008", # assignment to function call (false positive in some cases)
 ]
 
 [tool.ruff.lint.isort]

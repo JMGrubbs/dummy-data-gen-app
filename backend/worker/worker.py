@@ -7,8 +7,7 @@ celery_client = Celery(
     broker=os.environ["CELERY_BROKER_URL"],
 )
 
-# use this to send a task to the worker
-# celery_client.send_task(
-#     "data_gen.process_data_gen_task",
-#     args=[new_task.id],
-# )
+celery_client.conf.update(
+    task_create_missing_queue_type="quorum",
+    broker_transport_options={"confirm_publish": True},
+)
