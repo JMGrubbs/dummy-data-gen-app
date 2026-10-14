@@ -1,5 +1,7 @@
 import uuid
+
 from pydantic import BaseModel, EmailStr, field_validator
+
 
 class UserCreate(BaseModel):
     username: EmailStr
@@ -22,6 +24,7 @@ class UserCreate(BaseModel):
             raise ValueError("Password must contain at least one special character")
         return password
 
+
 class UserLogin(BaseModel):
     username: EmailStr
     password: str
@@ -30,6 +33,7 @@ class UserLogin(BaseModel):
     def normalize_email(cls, username: EmailStr) -> str:
         return username.strip().lower()
 
+
 class DeleteUser(BaseModel):
     email: EmailStr
 
@@ -37,11 +41,14 @@ class DeleteUser(BaseModel):
     def normalize_email(cls, email: EmailStr) -> str:
         return email.strip().lower()
 
+
 class UserToken(BaseModel):
     token: str
 
+
 class LoginResponse(BaseModel):
     username: EmailStr
+
 
 class AuthorizedUser(BaseModel):
     id: uuid.UUID

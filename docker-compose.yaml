@@ -38,6 +38,28 @@ services:
     volumes:
       - ./backend:/app
 
+  reciver:
+    build:
+      context: ./reciver
+      dockerfile: Dockerfile
+    working_dir: /app
+    command: python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    env_file:
+      - ./reciver/.env
+    ports:
+      - "8011:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: always
+    volumes:
+      - ./reciver:/app
+
   postgres:
     image: pgvector/pgvector:pg17
     env_file:
