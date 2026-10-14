@@ -37,3 +37,8 @@ class DataGenTask(Base):
         Integer,
         nullable=False,
     )
+
+    status: Mapped[str] = mapped_column(
+        nullable=False,
+        default="pending",
+    )
