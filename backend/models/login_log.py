@@ -1,10 +1,9 @@
 import uuid
 from datetime import datetime
 
+from db.base import Base
 from sqlalchemy import DateTime, Index, Integer, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
-
-from db.base import Base
 
 
 class LoginLog(Base):

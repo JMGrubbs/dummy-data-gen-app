@@ -38,6 +38,28 @@ services:
     volumes:
       - ./backend:/app
 
+  receiver:
+    build:
+      context: ./receiver
+      dockerfile: Dockerfile
+    working_dir: /app
+    command: python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    env_file:
+      - ./receiver/.env
+    ports:
+      - "8011:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: always
+    volumes:
+      - ./receiver:/app
+
   postgres:
     image: pgvector/pgvector:pg17
     env_file:
@@ -63,6 +85,39 @@ services:
       timeout: 5s
       retries: 3
     restart: always
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    environment:
+      RABBITMQ_DEFAULT_USER: "${RABBITMQ_USER:-celery}"
+      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_PASSWORD:-change-this-password}"
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"
+      - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+  worker:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    working_dir: /app
+    command: celery -A celery_app:celery_app worker --loglevel=INFO --autoscale=10,2 --queues=data-gen
+    # command: celery -A celery_app:celery_app worker --loglevel=INFO --concurrency=2 --queues=data-gen --autoscale=10,2
+    env_file:
+      - ./worker/.env
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    restart: always
+    volumes:
+      - ./worker:/app
 
 volumes:
   frontend_node_modules:

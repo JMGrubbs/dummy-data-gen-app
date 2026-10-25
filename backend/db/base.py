@@ -1,11 +1,14 @@
-from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import MetaData
+from sqlalchemy.orm import DeclarativeBase
 
 metadata = MetaData(schema="app")
+
 
 class Base(DeclarativeBase):
     metadata = metadata
 
+
 from models import (
-    login_log,
-)# noqa: F401
+    data_gen_task,  # noqa: F401 # Registers table with Alembic metadata.
+    login_log,  # noqa: F401  # Registers table with Alembic metadata.
+)

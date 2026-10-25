@@ -1,0 +1,31 @@
+[tool.ruff]
+line-length = 145
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "F",    # Pyflakes / unused imports and variables
+    "I",    # isort-compatible import sorting
+    "UP",   # modernize Python syntax
+    "B",    # likely bugs
+    "SIM",  # simplify code
+    "ANN",  # require function type annotations
+    "RUF",  # Ruff-specific rules
+]
+
+ignore = [
+    "ANN101", # self annotation (obsolete in newer Ruff, harmless if absent)
+    "ANN102",  # cls annotation
+    "B008", # assignment to function call (false positive in some cases)
+]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+known-first-party = ["src"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+skip-magic-trailing-comma = false

@@ -1,0 +1,4 @@
+celery>=5.5,<6
+httpx
+sqlalchemy
+asyncpg

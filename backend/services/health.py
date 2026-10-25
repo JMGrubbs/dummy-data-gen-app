@@ -3,12 +3,11 @@
 from __future__ import annotations
 
 import asyncio
-from datetime import datetime, timezone
-
-from sqlalchemy import text
+from datetime import UTC, datetime
 
 from cache.redis import redis_manager
 from db.session import engine
+from sqlalchemy import text
 
 
 async def check_database() -> bool:
@@ -34,4 +33,4 @@ async def dependencies_ready() -> bool:
 
 
 def live_payload() -> dict[str, str]:
-    return {"status": "alive", "timestamp": datetime.now(timezone.utc).isoformat()}
+    return {"status": "alive", "timestamp": datetime.now(UTC).isoformat()}
