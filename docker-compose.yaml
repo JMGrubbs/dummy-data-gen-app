@@ -38,14 +38,14 @@ services:
     volumes:
       - ./backend:/app
 
-  reciver:
+  receiver:
     build:
-      context: ./reciver
+      context: ./receiver
       dockerfile: Dockerfile
     working_dir: /app
     command: python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
     env_file:
-      - ./reciver/.env
+      - ./receiver/.env
     ports:
       - "8011:8000"
     depends_on:
@@ -58,7 +58,7 @@ services:
       retries: 3
     restart: always
     volumes:
-      - ./reciver:/app
+      - ./receiver:/app
 
   postgres:
     image: pgvector/pgvector:pg17

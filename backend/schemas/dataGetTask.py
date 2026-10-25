@@ -8,7 +8,7 @@ default_package: dict[str, Any] = {
     "requests_per_min": 60,
     "data": {"name": "John Doe", "age": 30, "email": "JohnDoe@gmail.com", "timestamp": datetime.now().timestamp()},
 }
-url_destination: str = "http://reciver:8000"
+url_destination: str = "http://receiver:8000"
 
 
 class DataGeneratorResponse(BaseModel):

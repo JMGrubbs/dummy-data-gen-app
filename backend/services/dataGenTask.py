@@ -35,7 +35,7 @@ async def load_data_gen_task(task: PackageFormat, db_session: AsyncSession) -> N
             new_task.id,
             {
                 "user_id": str(new_task.user_id),
-                "url_destination": new_task.url_destination + "/api/v1/reciver/hook",
+                "url_destination": new_task.url_destination + "/api/v1/receiver/hook",
                 "data_bp": new_task.data_bp,
                 "remaining_requests": new_task.remaining_requests,
                 "requests_per_min": new_task.requests_per_min,
