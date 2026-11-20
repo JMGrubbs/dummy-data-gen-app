@@ -12,9 +12,15 @@ from middleware.request_id import RequestIDMiddleware
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await redis_manager.connect()
-    yield
-    await redis_manager.disconnect()
-    await http_client.aclose()
+    await redis_manager.flushdb()
+    redis = redis_manager.get_client()
+    app.state.redis = redis
+
+    try:
+        yield
+    finally:
+        await redis_manager.disconnect()
+        await http_client.aclose()
 
 
 app = FastAPI(
