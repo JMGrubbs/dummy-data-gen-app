@@ -1,8 +1,8 @@
-import uuid
+from uuid import UUID
 from datetime import datetime
 
 from db.base import Base
-from sqlalchemy import DateTime, Index, Integer, Uuid, func
+from sqlalchemy import DateTime, Index, Uuid, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 
@@ -14,13 +14,13 @@ class Project(Base):
         {"schema": "app"},
     )
 
-    id: Mapped[int] = mapped_column(
-        Integer,
+    id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
         primary_key=True,
-        autoincrement=True,
+        server_default=func.gen_random_uuid(),
     )
 
-    user_id: Mapped[uuid.UUID] = mapped_column(
+    user_id: Mapped[UUID] = mapped_column(
         Uuid(as_uuid=True),
         nullable=False,
     )

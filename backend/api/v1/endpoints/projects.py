@@ -26,7 +26,7 @@ router = APIRouter()
 
 def project_cache_key(
     user_id: UUID,
-    project_id: int | None = None,
+    project_id: UUID | None = None,
 ) -> str:
     return (
         f"projects:"
@@ -39,7 +39,7 @@ def project_cache_key(
 @router.get("/{project_id}", summary="Get a specific project for the current user")
 async def fetch_projects(
     request: Request,
-    project_id: int | None = None,
+    project_id: UUID | None = None,
     current_user: AuthorizedUser = Depends(get_current_user),
     db_client: AsyncSession = Depends(get_session),
 ) -> ProjectsResponse:
@@ -77,7 +77,6 @@ async def new_project(
 ) -> ProjectResponse:
     redis: Redis = request.app.state.redis
 
-
     new_project: ProjectResponse = await create_project(
         db_client=db_client,
         user_id=current_user.id,
@@ -86,7 +85,7 @@ async def new_project(
 
     cache_key = project_cache_key(
         user_id=current_user.id,
-        project_id=int(new_project.id)
+        project_id=new_project.id
     )
 
     encoded_projects = jsonable_encoder(new_project)
@@ -99,7 +98,7 @@ async def new_project(
 @router.delete("/{project_id}", summary="Delete a specific project for the current user")
 async def remove_project(
     request: Request,
-    project_id: int,
+    project_id: UUID,
     current_user: AuthorizedUser = Depends(get_current_user),
     db_client: AsyncSession = Depends(get_session),
 ) -> dict[str, Any]:
@@ -133,7 +132,7 @@ async def remove_project(
 @router.put("/{project_id}", summary="Update a specific project for the current user")
 async def edit_project(
     request: Request,
-    project_id: int,
+    project_id: UUID,
     project_data: CreateProjectRequest,
     current_user: AuthorizedUser = Depends(get_current_user),
     db_client: AsyncSession = Depends(get_session),

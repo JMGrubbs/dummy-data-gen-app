@@ -4,7 +4,7 @@ from models.project import Project  # Assuming you have a Project model defined 
 from sqlalchemy.future import select
 from schemas.projects import CreateProjectRequest, ProjectResponse, ProjectsResponse
 
-async def get_projects(db_client: AsyncSession, user_id: UUID, project_id: int | None = None) -> ProjectsResponse:
+async def get_projects(db_client: AsyncSession, user_id: UUID, project_id: UUID | None = None) -> ProjectsResponse:
     """
     Fetches projects for a given user from the database.
 
@@ -15,6 +15,7 @@ async def get_projects(db_client: AsyncSession, user_id: UUID, project_id: int |
     Returns:
         dict[str, any]: A dictionary containing the user's projects.
     """
+
     # Placeholder implementation. Replace with actual database query logic.
     if project_id:
         # Fetch a specific project for the user
@@ -63,14 +64,14 @@ async def create_project(db_client: AsyncSession, user_id: UUID, project_data: C
     await db_client.refresh(new_project)
 
     project: ProjectResponse = ProjectResponse(
-        id=str(new_project.id),
+        id=new_project.id,
         name=new_project.name,
         created_at=new_project.created_at.isoformat()
     )
     return project
 
 
-async def delete_project(db_client: AsyncSession, user_id: UUID, project_id: int) -> bool:
+async def delete_project(db_client: AsyncSession, user_id: UUID, project_id: UUID) -> bool:
     """
     Deletes a project for a given user from the database.
 
@@ -93,7 +94,7 @@ async def delete_project(db_client: AsyncSession, user_id: UUID, project_id: int
     return False
 
 
-async def update_project(db_client: AsyncSession, user_id: UUID, project_id: int, project_data: CreateProjectRequest) -> ProjectResponse:
+async def update_project(db_client: AsyncSession, user_id: UUID, project_id: UUID, project_data: CreateProjectRequest) -> ProjectResponse:
     """
     Updates a project for a given user in the database.
 
