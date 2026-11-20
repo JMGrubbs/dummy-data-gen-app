@@ -1,7 +1,7 @@
 import uuid
 
-from models.data_gen_task import DataGenTask
-from schemas.dataGetTask import PackageFormat
+from models.tasks import DataGenTask
+from schemas.tasks import PackageFormat
 from sqlalchemy.ext.asyncio import AsyncSession
 from worker.worker import celery_client
 

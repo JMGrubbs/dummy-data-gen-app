@@ -1,27 +1,27 @@
-import uuid
+from uuid import UUID
 from typing import Any
 
 from db.base import Base
-from sqlalchemy import Index, Integer, Uuid
+from sqlalchemy import Index, Integer, Uuid, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 
 class DataGenTask(Base):
-    __tablename__ = "data_gen_task"
+    __tablename__ = "task"
 
     __table_args__ = (
-        Index("ix_data_gen_task_user_id", "user_id"),
+        Index("ix_task_user_id", "user_id"),
         {"schema": "app"},
     )
 
-    id: Mapped[int] = mapped_column(
-        Integer,
+    id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
         primary_key=True,
-        autoincrement=True,
+        server_default=func.gen_random_uuid(),
     )
 
-    user_id: Mapped[uuid.UUID] = mapped_column(
+    user_id: Mapped[UUID] = mapped_column(
         Uuid,
         nullable=False,
     )

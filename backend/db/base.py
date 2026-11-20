@@ -9,6 +9,7 @@ class Base(DeclarativeBase):
 
 
 from models import (
-    data_gen_task,  # noqa: F401 # Registers table with Alembic metadata.
+    tasks,  # noqa: F401 # Registers table with Alembic metadata.
     login_log,  # noqa: F401  # Registers table with Alembic metadata.
+    project,  # noqa: F401  # Registers table with Alembic metadata.
 )

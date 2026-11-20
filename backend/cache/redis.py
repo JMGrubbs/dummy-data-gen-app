@@ -57,5 +57,13 @@ class RedisManager:
             raise RuntimeError("Redis client has not been initialized.")
         return self._client
 
+    async def flushdb(self) -> None:
+        """
+        Flush the currently selected Redis database.
+        """
+        if self._client is None:
+            raise RuntimeError("Redis client has not been initialized.")
+        return await self._client.flushdb()
+
 
 redis_manager = RedisManager()
