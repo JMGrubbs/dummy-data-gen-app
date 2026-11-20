@@ -155,6 +155,11 @@ async def edit_project(
         project_data=project_data
     )
 
+    cache_key = project_cache_key(
+        user_id=current_user.id,
+        project_id=updated_project.id
+    )
+
     encoded_projects = jsonable_encoder(updated_project)
 
     await redis.set(cache_key, json.dumps(encoded_projects), ex=20)

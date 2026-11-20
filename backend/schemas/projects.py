@@ -5,7 +5,7 @@ class CreateProjectRequest(BaseModel):
 
 
 class ProjectResponse(BaseModel):
-    id: str
+    id: int
     name: str
     created_at: str
 

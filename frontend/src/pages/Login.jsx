@@ -1,15 +1,11 @@
 import { useState } from "react";
 import { api, ApiError } from "../services/api.js";
 
-export default function Login({ onNavigate }) {
+export default function Login({ onNavigate, onAuthenticated }) {
   const [showPassword, setShowPassword] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleLogin = async (event) => {
-    event.preventDefault();
-  };
 
   return (
     <section className="login-page shell">
@@ -54,8 +50,9 @@ export default function Login({ onNavigate }) {
             setIsSubmitting(true);
             const form = new FormData(event.currentTarget);
             try {
-              await api.login(form.get("email"), form.get("password"));
+              const currentUser = await api.login(form.get("email"), form.get("password"));
               setSubmitted(true);
+              onAuthenticated(currentUser);
             } catch (requestError) {
               setError(requestError instanceof ApiError ? requestError.message : "Unable to log in right now. Please try again.");
             } finally {

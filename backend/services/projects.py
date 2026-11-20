@@ -1,4 +1,3 @@
-from typing import Any
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.project import Project  # Assuming you have a Project model defined in your models module
@@ -25,7 +24,7 @@ async def get_projects(db_client: AsyncSession, user_id: UUID, project_id: int |
         project = result.scalar_one_or_none()
         if project:
             return ProjectsResponse(projects=[ProjectResponse(
-                id=str(project.id),
+                id=project.id,
                 name=project.name,
                 created_at=project.created_at.isoformat()
             )])
@@ -39,7 +38,7 @@ async def get_projects(db_client: AsyncSession, user_id: UUID, project_id: int |
         projects = result.scalars().all()
         return ProjectsResponse(projects=[
             ProjectResponse(
-                id=str(project.id),
+                id=project.id,
                 name=project.name,
                 created_at=project.created_at.isoformat()
             ) for project in projects
@@ -117,7 +116,7 @@ async def update_project(db_client: AsyncSession, user_id: UUID, project_id: int
         await db_client.commit()
         await db_client.refresh(project)
         return ProjectResponse(
-            id=str(project.id),
+            id=project.id,
             name=project.name,
             created_at=project.created_at.isoformat()
         )
